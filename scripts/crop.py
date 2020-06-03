@@ -2,6 +2,11 @@ import os
 import glob
 import requests
 import time
+from PIL import Image
+import random
+r = [x for x in open("../questions.txt").read().split("\n") if len(x) > 0]
+random.shuffle(r)
+questionList = r
 
 QUESTION_SET = requests.get("https://leetcode.com/api/problems/all/").json()['stat_status_pairs']
 levels = {1: "Easy", 2: "Medium", 3: "Hard"}
@@ -35,17 +40,25 @@ def write_to_markdown(fileName):
             os.system("echo '[![N|Solid](images/{})](#)' >> ../README.md".format(fileName))
 
 if __name__ == '__main__':
-    query = raw_input("search: ")
+    query = questionList.pop(0)
     sizeVal = len(glob.glob("../croppedImages/*.png"))
-    while len(query) > 0:
-        x = return_question_filename(find_question(query))
-        os.system("open {}".format(x))
-        while len(glob.glob("../croppedImages/*.png")) != sizeVal:
-            time.sleep(1)
-        croppedImage = sorted(glob.glob("../croppedImages/*.png"), key=os.path.getmtime)[-1]
-        print croppedImage
-        os.system("mv '{}' ../images/{}".format(croppedImage, x))
-        write_to_markdown(x)
+    while len(questionList) > 0:
+        try:
+            x = return_question_filename(find_question(query))
+            if not os.path.exists("../images/{}".format(x)):
+                os.system("open {}".format(x))
+                while len(glob.glob("../croppedImages/*.png")) == sizeVal:
+                    print("NOT SAME")
+                    time.sleep(1)
+                croppedImage = sorted(glob.glob("../croppedImages/*.png"), key=os.path.getmtime)[-1]
+                print croppedImage
+                os.system("mv '{}' ../images/{}".format(croppedImage, x))
+                write_to_markdown(x)
+                sizeVal = len(glob.glob("../croppedImages/*.png"))
+        except Exception as exp:
+            print(exp)
+        print("COMPLETED: {}".format(x))
         sizeVal = len(glob.glob("../croppedImages/*.png"))
-        query = raw_input("search: ")
+        query = questionList.pop(0)
+        raw_input("NEXT")
     main()
