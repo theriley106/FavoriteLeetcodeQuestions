@@ -32,11 +32,6 @@ Collection of particularly interesting Leetcode questions I've come across while
 [![N|Solid](images/contains-duplicate.png)](#)
 
 
-## [Valid Parentheses - #20 | Difficulty: Easy](https://leetcode.com/problems/valid-parentheses/)
-
-[![N|Solid](images/valid-parentheses.png)](#)
-
-
 ## [Reorder List - #143 | Difficulty: Medium](https://leetcode.com/problems/reorder-list/)
 
 [![N|Solid](images/reorder-list.png)](#)
