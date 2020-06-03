@@ -4,7 +4,7 @@ import requests
 import time
 
 QUESTION_SET = requests.get("https://leetcode.com/api/problems/all/").json()['stat_status_pairs']
-
+levels = {1: "Easy", 2: "Medium", 3: "Hard"}
 def find_question(query):
     if 'http' in query:
         question_title = query.partition("/problems/")[2].partition("/")[0]
@@ -19,6 +19,21 @@ def find_question(query):
 def return_question_filename(url):
     return url.partition("/problems/")[2].partition("/")[0] + ".png"
 
+def write_to_markdown(fileName):
+    question_title = fileName.partition(".pn")[0]
+    for question in QUESTION_SET:
+        if question['stat']['question__title_slug'] == question_title:
+            url = 'https://leetcode.com/problems/{}/'.format(question_title)
+            os.system("echo >> ../README.md")
+            os.system("echo >> ../README.md")
+            difficulty = levels[question['difficulty']['level']]
+            number = question['stat']['frontend_question_id']
+            title = question['stat']['question__title']
+
+            os.system("echo '## [{} - #{} | Difficulty: {}]({})' >> ../README.md".format(title, number, difficulty, url))
+            os.system("echo >> ../README.md")
+            os.system("echo '[![N|Solid](images/{})](#)' >> ../README.md".format(fileName))
+
 if __name__ == '__main__':
     query = raw_input("search: ")
     sizeVal = len(glob.glob("../croppedImages/*.png"))
@@ -29,7 +44,8 @@ if __name__ == '__main__':
             time.sleep(1)
         croppedImage = sorted(glob.glob("../croppedImages/*.png"), key=os.path.getmtime)[-1]
         print croppedImage
-        os.system("mv '{}' ../{}".format(croppedImage, x))
+        os.system("mv '{}' ../images/{}".format(croppedImage, x))
+        write_to_markdown(x)
         sizeVal = len(glob.glob("../croppedImages/*.png"))
         query = raw_input("search: ")
     main()
